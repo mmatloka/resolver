@@ -62,15 +62,15 @@ import org.jboss.shrinkwrap.resolver.impl.maven.internal.MavenModelResolver;
 import org.jboss.shrinkwrap.resolver.impl.maven.internal.SettingsXmlProfileSelector;
 import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogModelProblemCollector;
 import org.jboss.shrinkwrap.resolver.impl.maven.pom.ParsedPomFileImpl;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.repository.Authentication;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.ArtifactResult;
-import org.sonatype.aether.resolution.DependencyResolutionException;
-import org.sonatype.aether.util.repository.DefaultMirrorSelector;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 
 /**
  * Implementation of a {@link MavenWorkingSession}, encapsulating Maven/Aether backend
@@ -96,8 +96,8 @@ public class MavenWorkingSessionImpl implements MavenWorkingSession {
 
     private static final String MAVEN_CENTRAL_NAME = "central";
     // creates a link to Maven Central Repository
-    private static final RemoteRepository MAVEN_CENTRAL = new RemoteRepository(MAVEN_CENTRAL_NAME, "default",
-            "http://repo1.maven.org/maven2");
+    private static final RemoteRepository MAVEN_CENTRAL = new RemoteRepository.Builder(MAVEN_CENTRAL_NAME, "default",
+            "http://repo1.maven.org/maven2").build();
 
     private final MavenRepositorySystem system;
     private Settings settings;
