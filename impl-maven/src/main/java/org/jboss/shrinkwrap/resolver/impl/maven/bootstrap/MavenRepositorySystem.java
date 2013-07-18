@@ -28,34 +28,34 @@ import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.apache.maven.settings.Settings;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.impl.ArtifactDescriptorReader;
+import org.eclipse.aether.impl.MetadataGeneratorFactory;
+import org.eclipse.aether.impl.VersionRangeResolver;
+import org.eclipse.aether.impl.VersionResolver;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenWorkingSession;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependency;
 import org.jboss.shrinkwrap.resolver.api.maven.filter.MavenResolutionFilter;
 import org.jboss.shrinkwrap.resolver.impl.maven.convert.MavenConverter;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.impl.ArtifactDescriptorReader;
-import org.sonatype.aether.impl.MetadataGeneratorFactory;
-import org.sonatype.aether.impl.VersionRangeResolver;
-import org.sonatype.aether.impl.VersionResolver;
-import org.sonatype.aether.impl.internal.DefaultServiceLocator;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.ArtifactResult;
-import org.sonatype.aether.resolution.DependencyRequest;
-import org.sonatype.aether.resolution.DependencyResolutionException;
-import org.sonatype.aether.resolution.DependencyResult;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.impl.DefaultServiceLocator;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Abstraction of the repository system for purposes of dependency resolution used by Maven
@@ -80,10 +80,11 @@ public class MavenRepositorySystem {
      * @param settings
      * A configuration of current session
      */
-    public MavenRepositorySystemSession getSession(final Settings settings) {
-        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+    public DefaultRepositorySystemSession getSession(final Settings settings) {
+        DefaultRepositorySystemSession session = new DefaultRepositorySystemSession();
 
         MavenManagerBuilder builder = new MavenManagerBuilder(system, settings);
+
         session.setLocalRepositoryManager(builder.localRepositoryManager());
         session.setWorkspaceReader(builder.workspaceReader());
         session.setTransferListener(builder.transferListerer());
@@ -106,8 +107,8 @@ public class MavenRepositorySystem {
      * SWR Aether session abstraction
      * @param request
      * The request to be computed
-     * @param filter
-     * The filter of dependency results
+     * @param filters
+     *        The filters of dependency results
      * @return A collection of artifacts which have built dependency tree from {@link request}
      * @throws DependencyCollectionException
      * If a dependency could not be computed or collected
@@ -168,7 +169,7 @@ public class MavenRepositorySystem {
 
 }
 
-class MavenResolutionFilterWrap implements org.sonatype.aether.graph.DependencyFilter {
+class MavenResolutionFilterWrap implements org.eclipse.aether.graph.DependencyFilter {
     private static final Logger log = Logger.getLogger(MavenResolutionFilterWrap.class.getName());
 
     private final MavenResolutionFilter[] filters;
@@ -185,7 +186,7 @@ class MavenResolutionFilterWrap implements org.sonatype.aether.graph.DependencyF
     /**
      * {@inheritDoc}
      *
-     * @see org.sonatype.aether.graph.DependencyFilter#accept(org.sonatype.aether.graph.DependencyNode, java.util.List)
+     * @see org.eclipse.aether.graph.DependencyFilter#accept(org.eclipse.aether.graph.DependencyNode, java.util.List)
      */
     @Override
     public boolean accept(final DependencyNode node, List<DependencyNode> parents) {
